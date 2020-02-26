@@ -1,6 +1,14 @@
-/*2020.2.16 lucky_lai 简单神经网络算法*/
+/*2020.2.26 
 
-/*主函数*/
+anthor:lucky_lai 
+
+I would say thanks to :
+
+frank_782 , Forest_Park , Steve_xmh and Ye_Jun
+
+*/
+
+/*JSWorker main function*/
 function main(args){
     try{
         switch(args.action){
@@ -16,7 +24,7 @@ function main(args){
                 config.inputValue = initArray(config.input);
                 config.hiddenValue = initArray(config.hidden);
                 config.outputValue = initArray(config.output);
-                config.outputValueExpect = args.outputValueExpect
+                config.outputValueExpect = args.outputValueExpect;
                 config.action = "train";
                 return config
             case "train":
@@ -32,9 +40,11 @@ function main(args){
                 config.outputValue = initArray(config.output);
                 config.outputValueExpect = args.outputValueExpect;
                 config.action = "train";
+                if(!config.outputValueExpect.length||!config.weight1.length||!config.weight2.length
+                    ||!config.inputValue.length)return {"error":"Some arrays are empty."}/*V1: Fixed here*/
                 forward(config);
                 backward(config);
-                return config
+                return config;
         }
 
     }catch(err){
@@ -47,7 +57,7 @@ function main(args){
 
 
 
-/*random初始化一个inp*oup的二维数组*/
+/*Init a random matrix with size inp*oup */
 function initWeight(inp,oup){
     var weight = new Array(inp);
     for(var i = 0 ; i < inp ; i++){
@@ -56,7 +66,7 @@ function initWeight(inp,oup){
     }
     return weight;
 }
-/*初始化一个长度为length的数组，元素全部为0*/
+/*Init a 0 Array of "length" length*/
 function initArray(length){
     var array = new Array(length);
     for(var i = 0 ; i < length ; i++){
@@ -64,15 +74,15 @@ function initArray(length){
     }
     return array;
 }
-/*代价函数*/
+/*Sigmoid function*/
 function sigmoid(x){
     return 1 / (1 + Math.exp(-x));
 }
-/*代价函数的导数*/
+/*Sigmon's derivative*/
 function sigmoidPrime(x){
     return x * (1 - x);
 }
-/*计算出output*/
+/*Network forward*/
 function forward(self){
     self.hiddenValue = initArray(self.hidden);
     self.outputValue = initArray(self.output);
@@ -90,9 +100,9 @@ function forward(self){
     for(var i = 0; i < self.output;i++)self.outputValue[i]=sigmoid(self.outputValue[i]);
     return;
 }
-/*反向传播*/
+/*Network backward*/
 function backward(self){
-    var error1 = [];
+    var error1 = [];/*Do not init them like : var error1 = error2 = []*/
     var delta1 = [];
     var error2 = [];
     var delta2 = [];
@@ -113,7 +123,7 @@ function backward(self){
 
     return;
 }
-/*矩阵翻转*/
+/*Turn a Matrix*/
 function turnMatrix(array){
     var x = array.length;
     var y = array[0].length;
@@ -123,7 +133,9 @@ function turnMatrix(array){
     }
     return array2;
 }
-/*列矩阵与矩阵点乘*/
+
+
+/* Matrix dot with a Column matrix and a simple matrix */
 function arrayDot(array1,array2){
     var array = initArray(array2[0].length);
     for(var i = 0 ; i < array2.length;i++){
@@ -133,3 +145,13 @@ function arrayDot(array1,array2){
 }
 
 
+
+
+function testFunction1() {/* V1: Stuck here becase of the Array "outputValueExpect" */
+    network = main({"input":"4","output":"4","speed":"1","hidden":"8","action":"init","outputValueExpect":[],"inputValue":[0,0,0,0],"weight1":[[0.40354305786332345,0.43711884944299584,0.09179569773269325,0.6426890921421813,0.7539277612115192,0.9884920830587489,0.4500227343380021,0.7556726109667422],[0.8388655655886612,0.9654633854019483,0.398082407423924,0.7059717357532838,0.43847544557808504,0.07045946575225748,0.44034410386684764,0.4095180083056167],[0.9120831420041495,0.9534148526051207,0.4575022945399021,0.4384717872377397,0.916123382584348,0.14378985691203727,0.4371103801212739,0.5348612981716783],[0.8927767293201567,0.422586441184148,0.4606164681191962,0.4396082653228448,0.820920925250918,0.37804660313495897,0.11012300048817347,0.12303523884053202]],"weight2":[[0.6352856913220923,0.6183761523872207,0.37279085978086046,0.8192460614238977],[0.3408695280492824,0.09997220310948585,0.08562676387279078,0.7926922769138558],[0.4065444129908533,0.953973214508417,0.9711809627401857,0.8283047492787412],[0.4665830563271647,0.938015380575365,0.3692694724741741,0.30862997550093185],[0.6632988118941925,0.7800820029745787,0.5994405704739152,0.8083900884759301],[0.4117424780881098,0.3046737808801463,0.5524930553089051,0.7662221215004259],[0.679479228633568,0.2362175386762122,0.5704629437587816,0.7327364785120778],[0.15414703587061362,0.15985902587723277,0.6849987063446856,0.44516980195192124]]});
+    /*                                                                                                   ^  */
+    /*                                                                                                  Here*/
+    /*So , It stucks */
+    network = main(network);/*It works here*/
+    console.log(network);/*But it cannot ; the Array "weight2" was filled with NaN */
+}
